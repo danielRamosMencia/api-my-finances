@@ -16,6 +16,7 @@ func main() {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /api/users", users.HdlrGetAll)
+	mux.HandleFunc("POST /api/users", users.HdlrSave)
 
 	slog.Info("Server listening on http://127.0.1.1" + configurations.Envs.SERVER_PORT)
 

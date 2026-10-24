@@ -6,11 +6,14 @@ import (
 	"net/http"
 
 	"github.com/danielRamosMencia/api-my-finances/internal/configurations"
+	"github.com/danielRamosMencia/api-my-finances/internal/tursodb"
 )
 
 func main() {
 	configurations.InitEnvVariables()
 	serverPort := configurations.Envs.SERVER_PORT
+
+	tursodb.ConnectTursoDb()
 
 	mux := http.NewServeMux()
 

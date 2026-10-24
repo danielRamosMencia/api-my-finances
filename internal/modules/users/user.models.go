@@ -5,6 +5,7 @@ import "time"
 type UserDTO struct {
 	Pid       string     `json:"pid"`
 	Name      string     `json:"name"`
+	Active    bool       `json:"active"`
 	Username  string     `json:"username"`
 	Email     string     `json:"email"`
 	Type      string     `json:"type"`
@@ -13,7 +14,9 @@ type UserDTO struct {
 }
 
 type UserRequest struct {
+	Name     string `json:"name"`
 	Username string `json:"username"`
+	Password string `json:"password"`
 	Email    string `json:"email"`
 	Type     string `json:"type"`
 }

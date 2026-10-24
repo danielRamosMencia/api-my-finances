@@ -1,27 +1,23 @@
 package main
 
 import (
-	"encoding/json"
 	"log/slog"
 	"net/http"
 
 	"github.com/danielRamosMencia/api-my-finances/internal/configurations"
+	"github.com/danielRamosMencia/api-my-finances/internal/modules/users"
 	"github.com/danielRamosMencia/api-my-finances/internal/tursodb"
 )
 
 func main() {
 	configurations.InitEnvVariables()
-	serverPort := configurations.Envs.SERVER_PORT
-
 	tursodb.ConnectTursoDb()
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /api/health/check", func(w http.ResponseWriter, r *http.Request) {
-		json.NewEncoder(w).Encode("Hello world")
-	})
+	mux.HandleFunc("GET /api/users", users.HdlrGetAll)
 
-	slog.Info("Server listening on http://127.0.1.1" + serverPort)
+	slog.Info("Server listening on http://127.0.1.1" + configurations.Envs.SERVER_PORT)
 
-	http.ListenAndServe(serverPort, mux)
+	http.ListenAndServe(configurations.Envs.SERVER_PORT, mux)
 }

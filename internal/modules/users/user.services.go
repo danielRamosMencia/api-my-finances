@@ -22,22 +22,28 @@ func ServGetAll() ([]UserDTO, error) {
 }
 
 func ServSave(request UserRequest) (UserDTO, error) {
-	db := UserDB{
-		Id:        1,
+	hashedPassword, _ := utils.HashPassword(request.Password)
+	instant := time.Now().UTC().Format(time.RFC3339Nano)
+
+	user := UserDB{
 		Pid:       utils.RandomString(32),
 		Active:    true,
 		Name:      request.Name,
 		Username:  request.Username,
 		Email:     request.Email,
 		Token:     utils.Ptr(utils.RandomString(8)),
-		Password:  request.Password,
-		Type:      "OPERATOR",
-		CreatedAt: time.Now().UTC(),
-		UpdatedAt: utils.Ptr(time.Now().UTC()),
-		DeletedAt: utils.Ptr(time.Now().UTC()),
+		Password:  hashedPassword,
+		Type:      request.Type,
+		CreatedAt: instant,
+		UpdatedAt: utils.Ptr(instant),
 	}
 
-	return toDTO(db), nil
+	err := RepoSave(user)
+	if err != nil {
+		return UserDTO{}, err
+	}
+
+	return toDTO(user), nil
 }
 
 func toDTO(user UserDB) UserDTO {

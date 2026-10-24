@@ -9,7 +9,9 @@ import (
 )
 
 type EnvVariable struct {
-	SERVER_PORT string
+	SERVER_PORT    string
+	DATABASE_URL   string
+	DATABASE_TOKEN string
 }
 
 var (
@@ -25,6 +27,8 @@ func InitEnvVariables() {
 		}
 
 		Envs.SERVER_PORT = os.Getenv("SERVER_PORT")
+		Envs.DATABASE_URL = os.Getenv("DATABASE_URL")
+		Envs.DATABASE_TOKEN = os.Getenv("DATABASE_TOKEN")
 
 		slog.Info("Environment variables initialized")
 	})

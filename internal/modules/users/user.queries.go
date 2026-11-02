@@ -49,3 +49,37 @@ INSERT INTO tb_user (
 	?
 );
 `
+
+const UPDATE = `
+UPDATE tb_user AS tu
+SET
+	name = ?,
+	username = ?,
+	email = ?
+WHERE
+	tu.pid = ?;
+`
+
+const UPDATE_ACTIVE = `
+UPDATE tb_user AS tu
+SET
+	active = ?
+WHERE
+	tu.pid = ?;
+`
+
+const UPDATE_PASSWORD = `
+UPDATE tb_user AS tu
+SET
+	password = ?
+WHERE
+	tu.pid = ?;
+`
+
+const UPDATE_TOKEN = `
+UPDATE tb_user AS tu
+SET
+	token = ?
+WHERE
+	tu.pid = ?;
+`

@@ -87,3 +87,69 @@ func RepoSave(user UserDB) error {
 
 	return nil
 }
+
+func RepoUpdate(pid string, user UserDB) error {
+	_, err := tursodb.DB.ExecContext(
+		context.Background(),
+		UPDATE,
+		user.Name,
+		user.Username,
+		user.Email,
+		pid,
+	)
+
+	if err != nil {
+		slog.Error("[RepoUpdate] error updating user: " + err.Error())
+		return err
+	}
+
+	return nil
+}
+
+func RepoUpdateActive(pid string, active bool) error {
+	_, err := tursodb.DB.ExecContext(
+		context.Background(),
+		UPDATE_ACTIVE,
+		active,
+		pid,
+	)
+
+	if err != nil {
+		slog.Error("[RepoUpdateActive] error updating user active: " + err.Error())
+		return err
+	}
+
+	return nil
+}
+
+func RepoUpdatePassword(pid string, password string) error {
+	_, err := tursodb.DB.ExecContext(
+		context.Background(),
+		UPDATE_PASSWORD,
+		password,
+		pid,
+	)
+
+	if err != nil {
+		slog.Error("[RepoUpdatePassword] error updating user password: " + err.Error())
+		return err
+	}
+
+	return nil
+}
+
+func RepoUpdateToken(pid string, token string) error {
+	_, err := tursodb.DB.ExecContext(
+		context.Background(),
+		UPDATE_TOKEN,
+		token,
+		pid,
+	)
+
+	if err != nil {
+		slog.Error("[RepoUpdateToken] error updating user token: " + err.Error())
+		return err
+	}
+
+	return nil
+}

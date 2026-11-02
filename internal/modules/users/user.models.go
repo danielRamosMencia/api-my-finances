@@ -19,6 +19,24 @@ type UserRequest struct {
 	Type     string `json:"type"`
 }
 
+type UpdateUserRequest struct {
+	Name     string `json:"name"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+}
+
+type UpdatePasswordRequest struct {
+	Password string `json:"password"`
+}
+
+type UpdateActiveRequest struct {
+	Active bool `json:"active"`
+}
+
+type UpdateTokenRequest struct {
+	Token string `json:"token"`
+}
+
 type UserDB struct {
 	Id        int     `db:"id"`
 	Pid       string  `db:"pid"`

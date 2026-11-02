@@ -9,13 +9,13 @@ func ServGetMovementTypes() ([]MovementTypeDTO, error) {
 	var dtos []MovementTypeDTO
 
 	for _, mt := range movementTypes {
-		dtos = append(dtos, toDto(mt))
+		dtos = append(dtos, toDTO(mt))
 	}
 
 	return dtos, nil
 }
 
-func toDto(movementType MovementTypeDB) MovementTypeDTO {
+func toDTO(movementType MovementTypeDB) MovementTypeDTO {
 	return MovementTypeDTO{
 		Pid:         movementType.Pid,
 		Active:      movementType.Active,

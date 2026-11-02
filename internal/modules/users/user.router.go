@@ -1,6 +1,11 @@
 package users
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/danielRamosMencia/api-my-finances/internal/modules/accounts"
+	"github.com/danielRamosMencia/api-my-finances/internal/modules/movements"
+)
 
 func SetUserRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/users", HdlrGetAll)
@@ -11,4 +16,10 @@ func SetUserRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("PATCH /api/users/{pid}/password", HdlrUpdatePassword)
 	mux.HandleFunc("PATCH /api/users/{pid}/token", HdlrUpdateToken)
 	mux.HandleFunc("PATCH /api/users/{pid}/token/verify", HdlrVerifyToken)
+
+	// accounts
+	mux.HandleFunc("GET /api/users/accounts", accounts.HldrGetUserAccounts)
+
+	// movements
+	mux.HandleFunc("GET /api/users/movements", movements.HldrGetUserMovements)
 }

@@ -3,9 +3,16 @@ package movements
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/danielRamosMencia/api-my-finances/internal/middlewares"
 )
 
 func HldrGetUserMovements(w http.ResponseWriter, r *http.Request) {
+	ok := middlewares.AuthRequired(w, r)
+	if !ok {
+		return
+	}
+
 	movements, err := ServGetUserMovements()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

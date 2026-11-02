@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"errors"
+	"fmt"
 	"time"
 
 	"github.com/danielRamosMencia/api-my-finances/internal/configurations"
@@ -31,8 +31,8 @@ func CreateJwt(request TokenRequest) (string, error) {
 			"pid":      request.Pid,
 			"email":    request.Email,
 			"session":  RandomString(16),
-			"iat":      time.Now().UTC(),
-			"exp":      time.Now().Add(time.Hour * 24).UTC(),
+			"iat":      time.Now().Unix(),
+			"exp":      time.Now().Add(time.Hour * 24).Unix(),
 		})
 
 	tokenString, err := token.SignedString(JWT_KEY)
@@ -53,7 +53,7 @@ func VerifyToken(tokenString string) error {
 	}
 
 	if !token.Valid {
-		return errors.New("invalid token")
+		return fmt.Errorf("invalid token")
 	}
 
 	return nil

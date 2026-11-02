@@ -6,6 +6,7 @@ import (
 
 	"github.com/danielRamosMencia/api-my-finances/internal/configurations"
 	"github.com/danielRamosMencia/api-my-finances/internal/modules/accounts"
+	"github.com/danielRamosMencia/api-my-finances/internal/modules/auth"
 	"github.com/danielRamosMencia/api-my-finances/internal/modules/health"
 	"github.com/danielRamosMencia/api-my-finances/internal/modules/movements"
 	"github.com/danielRamosMencia/api-my-finances/internal/modules/movementtypes"
@@ -19,6 +20,7 @@ func main() {
 
 	mux := http.NewServeMux()
 
+	auth.SetAuthRoutes(mux)
 	health.SetHealthRoutes(mux)
 	users.SetUserRoutes(mux)
 	accounts.SetAccountsRoutes(mux)

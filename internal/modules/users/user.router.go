@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/danielRamosMencia/api-my-finances/internal/modules/accounts"
+	"github.com/danielRamosMencia/api-my-finances/internal/modules/movementhistory"
 	"github.com/danielRamosMencia/api-my-finances/internal/modules/movements"
 )
 
@@ -22,4 +23,5 @@ func SetUserRoutes(mux *http.ServeMux) {
 
 	// movements
 	mux.HandleFunc("GET /api/users/movements", movements.HldrGetUserMovements)
+	mux.HandleFunc("GET /api/users/movements/history", movementhistory.HldrGetUserHistory)
 }

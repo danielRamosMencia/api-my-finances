@@ -44,6 +44,29 @@ func RepoGetAll() ([]UserDB, error) {
 	return users, nil
 }
 
+func RepoGetByPid(pid string) (*UserDB, error) {
+	row := tursodb.DB.QueryRowContext(context.Background(), SELECT_BY_PID, pid)
+
+	var user UserDB
+
+	err := row.Scan(
+		&user.Pid,
+		&user.Active,
+		&user.Name,
+		&user.Username,
+		&user.Email,
+		&user.Type,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+	if err != nil {
+		slog.Error("[RepoGetByPid] error getting user by pid: " + err.Error())
+		return nil, err
+	}
+
+	return &user, nil
+}
+
 func RepoSave(user UserDB) error {
 	_, err := tursodb.DB.ExecContext(
 		context.Background(),

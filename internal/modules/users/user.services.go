@@ -1,6 +1,7 @@
 package users
 
 import (
+	"errors"
 	"time"
 
 	"github.com/danielRamosMencia/api-my-finances/internal/utils"
@@ -19,6 +20,19 @@ func ServGetAll() ([]UserDTO, error) {
 	}
 
 	return dtos, nil
+}
+
+func ServGetByPid(pid string) (UserDTO, error) {
+	user, err := RepoGetByPid(pid)
+	if err != nil {
+		return UserDTO{}, err
+	}
+
+	if user == nil {
+		return UserDTO{}, errors.New("user with pid " + pid + " not found")
+	}
+
+	return toDTO(*user), nil
 }
 
 func ServSave(request UserRequest) (UserDTO, error) {

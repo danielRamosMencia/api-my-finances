@@ -13,6 +13,7 @@ type EnvVariable struct {
 	DATABASE_URL   string
 	DATABASE_TOKEN string
 	HMAC_KEY       string
+	JWT_SECRET     string
 }
 
 var (
@@ -31,6 +32,7 @@ func InitEnvVariables() {
 		Envs.DATABASE_URL = os.Getenv("DATABASE_URL")
 		Envs.DATABASE_TOKEN = os.Getenv("DATABASE_TOKEN")
 		Envs.HMAC_KEY = os.Getenv("HMAC_KEY")
+		Envs.JWT_SECRET = os.Getenv("JWT_SECRET")
 
 		slog.Info("Environment variables initialized")
 	})

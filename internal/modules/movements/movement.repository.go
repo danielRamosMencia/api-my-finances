@@ -72,6 +72,7 @@ func RepoGetByPid(pid string) (*MovementDB, error) {
 	err := row.Scan(
 		&movement.Id,
 		&movement.Pid,
+		&movement.Code,
 		&movement.Active,
 		&movement.Amount,
 		&movement.AccountId,

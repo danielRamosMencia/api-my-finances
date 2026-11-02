@@ -32,6 +32,7 @@ const SELECT_BY_PID = `
 SELECT
 	tm.id,
 	tm.pid,
+	tm.code,
 	tm.active,
 	tm.amount,
 	tm.account_id,

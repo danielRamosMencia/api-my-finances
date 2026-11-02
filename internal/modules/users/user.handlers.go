@@ -167,3 +167,32 @@ func HdlrUpdateToken(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(token)
 }
+
+func HdlrVerifyToken(w http.ResponseWriter, r *http.Request) {
+	var pid *string
+
+	pid = utils.Ptr(r.PathValue("pid"))
+	if pid == nil {
+		http.Error(w, "not provided pid", http.StatusBadRequest)
+		return
+	}
+
+	var request VerifyTokenRequest
+
+	err := json.NewDecoder(r.Body).Decode(&request)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	valid, err := ServVerifyToken(*pid, request.Token)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	json.NewEncoder(w).Encode(valid)
+}

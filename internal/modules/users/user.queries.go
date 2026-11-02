@@ -30,6 +30,16 @@ WHERE
 	tu.pid = ?;
 `
 
+const SELECT_TOKEN_BY_PID = `
+SELECT
+	tu.token
+FROM
+	tb_user AS tu
+WHERE
+	tu.pid = ?
+	AND tu.active = TRUE;
+`
+
 const INSERT = `
 INSERT INTO tb_user (
 	pid,

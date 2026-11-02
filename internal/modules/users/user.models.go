@@ -33,7 +33,7 @@ type UpdateActiveRequest struct {
 	Active bool `json:"active"`
 }
 
-type UpdateTokenRequest struct {
+type VerifyTokenRequest struct {
 	Token string `json:"token"`
 }
 

@@ -147,6 +147,21 @@ func ServUpdateToken(pid string) (string, error) {
 	return newToken, nil
 }
 
+func ServVerifyToken(pid string, token string) (bool, error) {
+	storedToken, err := RepoGetTokenByUserPid(pid)
+	if err != nil {
+		return false, err
+	}
+
+	if storedToken == nil {
+		return false, errors.New("user with pid " + pid + " has no token")
+	}
+
+	equal := utils.VerifyHmacSHA256(configurations.Envs.HMAC_KEY, token, *storedToken)
+
+	return equal, nil
+}
+
 func toDTO(user UserDB) UserDTO {
 	return UserDTO{
 		Pid:       user.Pid,

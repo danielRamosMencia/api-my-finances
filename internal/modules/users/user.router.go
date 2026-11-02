@@ -10,4 +10,5 @@ func SetUserRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("PATCH /api/users/{pid}/active", HdlrUpdateActive)
 	mux.HandleFunc("PATCH /api/users/{pid}/password", HdlrUpdatePassword)
 	mux.HandleFunc("PATCH /api/users/{pid}/token", HdlrUpdateToken)
+	mux.HandleFunc("PATCH /api/users/{pid}/token/verify", HdlrVerifyToken)
 }

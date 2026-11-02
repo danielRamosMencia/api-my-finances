@@ -67,6 +67,20 @@ func RepoGetByPid(pid string) (*UserDB, error) {
 	return &user, nil
 }
 
+func RepoGetTokenByUserPid(pid string) (*string, error) {
+	row := tursodb.DB.QueryRowContext(context.Background(), SELECT_TOKEN_BY_PID, pid)
+
+	var token *string
+
+	err := row.Scan(&token)
+	if err != nil {
+		slog.Error("[RepoGetTokenByUserPid] error getting user token by pid: " + err.Error())
+		return nil, err
+	}
+
+	return token, nil
+}
+
 func RepoSave(user UserDB) error {
 	_, err := tursodb.DB.ExecContext(
 		context.Background(),

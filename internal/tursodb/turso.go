@@ -30,6 +30,10 @@ func ConnectTursoDb() {
 			panic(err)
 		}
 
+		DB.SetMaxOpenConns(3)
+		DB.SetMaxIdleConns(0)
+		DB.SetConnMaxLifetime(0)
+
 		slog.Info("Remote Turso database connected")
 	})
 }
@@ -39,4 +43,16 @@ func CloseTursoDb() error {
 		return DB.Close()
 	}
 	return nil
+}
+
+func ShowDbStatistics() {
+	stats := DB.Stats()
+
+	slog.Debug("Database connection pool:",
+		"open_connections", stats.OpenConnections,
+		"in_use", stats.InUse,
+		"idle", stats.Idle,
+		"wait_count", stats.WaitCount,
+		"wait_duration", stats.WaitDuration,
+	)
 }

@@ -20,7 +20,15 @@ func AuthRequired(mux *http.ServeMux, publicRoutes ...string) http.Handler {
 		_, pattern := mux.Handler(r)
 
 		if pattern == "" || public[pattern] {
+			if !RequestLimiter(w, r, false) {
+				return
+			}
+
 			mux.ServeHTTP(w, r)
+			return
+		}
+
+		if !RequestLimiter(w, r, true) {
 			return
 		}
 

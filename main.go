@@ -21,6 +21,7 @@ func main() {
 	configurations.InitEnvVariables()
 	tursodb.ConnectTursoDb()
 	sessions.StartCleanup(15 * time.Minute)
+	middlewares.StartLimiterCleanup(5 * time.Minute)
 
 	mux := http.NewServeMux()
 
@@ -37,6 +38,8 @@ func main() {
 		"PATCH /api/users/{pid}/token",
 		"GET /api/health",
 		"GET /api/mock-pid",
+		"GET /api/health/sessions",
+		"GET /api/health/rate-limits",
 	)
 
 	slog.Info("Server listening on http://127.0.1.1" + configurations.Envs.SERVER_PORT)

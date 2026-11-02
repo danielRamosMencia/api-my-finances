@@ -75,6 +75,28 @@ func deleteExpired() {
 	}
 }
 
+type SessionInfo struct {
+	Key       string    `json:"key"`
+	Token     string    `json:"token"`
+	ExpiresAt time.Time `json:"expires_at"`
+}
+
+func Snapshot() []SessionInfo {
+	mu.RLock()
+	defer mu.RUnlock()
+
+	snapshot := make([]SessionInfo, 0, len(sessions))
+	for k, s := range sessions {
+		snapshot = append(snapshot, SessionInfo{
+			Key:       k,
+			Token:     s.token[:min(len(s.token), 20)] + "...",
+			ExpiresAt: s.expiresAt,
+		})
+	}
+
+	return snapshot
+}
+
 func StartCleanup(interval time.Duration) {
 	go func() {
 		ticker := time.NewTicker(interval)

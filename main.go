@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/danielRamosMencia/api-my-finances/internal/configurations"
+	"github.com/danielRamosMencia/api-my-finances/internal/modules/accounts"
 	"github.com/danielRamosMencia/api-my-finances/internal/modules/health"
 	"github.com/danielRamosMencia/api-my-finances/internal/modules/users"
 	"github.com/danielRamosMencia/api-my-finances/internal/tursodb"
@@ -18,6 +19,7 @@ func main() {
 
 	health.SetHealthRoutes(mux)
 	users.SetUserRoutes(mux)
+	accounts.SetAccountsRoutes(mux)
 
 	slog.Info("Server listening on http://127.0.1.1" + configurations.Envs.SERVER_PORT)
 

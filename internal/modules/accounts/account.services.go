@@ -1,13 +1,14 @@
 package accounts
 
 import (
+	"context"
 	"errors"
 
 	"github.com/danielRamosMencia/api-my-finances/internal/utils"
 )
 
-func ServGetUserAccounts() ([]AccountDTO, error) {
-	userPid := utils.MockGetClaim("pid")
+func ServGetUserAccounts(ctx context.Context) ([]AccountDTO, error) {
+	userPid := utils.GetClaim(ctx, "pid")
 	accounts, err := RepoGetUserAccounts(userPid)
 	if err != nil {
 		return nil, err
@@ -34,9 +35,9 @@ func ServGetByPid(pid string) (AccountDTO, error) {
 	return toDTO(*account), nil
 }
 
-func ServSave(request AccountRequest) (AccountDTO, error) {
+func ServSave(ctx context.Context, request AccountRequest) (AccountDTO, error) {
 	instant := utils.GetNowFormat()
-	userPid := utils.MockGetClaim("pid")
+	userPid := utils.GetClaim(ctx, "pid")
 
 	account := AccountDB{
 		Pid:       utils.RandomString(32),

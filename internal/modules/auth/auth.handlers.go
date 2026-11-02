@@ -22,3 +22,9 @@ func HldrLogin(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(jwt)
 }
+
+func HldrLogout(w http.ResponseWriter, r *http.Request) {
+	ServLogout(r.Context())
+
+	w.WriteHeader(http.StatusNoContent)
+}

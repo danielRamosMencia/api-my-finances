@@ -3,17 +3,10 @@ package movements
 import (
 	"encoding/json"
 	"net/http"
-
-	"github.com/danielRamosMencia/api-my-finances/internal/middlewares"
 )
 
 func HldrGetUserMovements(w http.ResponseWriter, r *http.Request) {
-	ok := middlewares.AuthRequired(w, r)
-	if !ok {
-		return
-	}
-
-	movements, err := ServGetUserMovements()
+	movements, err := ServGetUserMovements(r.Context())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -50,7 +43,7 @@ func HldrSave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	account, err := ServSave(request)
+	movement, err := ServSave(r.Context(), request)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -59,5 +52,5 @@ func HldrSave(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 
-	json.NewEncoder(w).Encode(account)
+	json.NewEncoder(w).Encode(movement)
 }

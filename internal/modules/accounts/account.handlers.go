@@ -6,7 +6,7 @@ import (
 )
 
 func HldrGetUserAccounts(w http.ResponseWriter, r *http.Request) {
-	accounts, err := ServGetUserAccounts()
+	accounts, err := ServGetUserAccounts(r.Context())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -46,7 +46,7 @@ func HldrSave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	account, err := ServSave(request)
+	account, err := ServSave(r.Context(), request)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

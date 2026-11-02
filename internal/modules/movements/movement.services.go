@@ -1,13 +1,14 @@
 package movements
 
 import (
+	"context"
 	"errors"
 
 	"github.com/danielRamosMencia/api-my-finances/internal/utils"
 )
 
-func ServGetUserMovements() ([]MovementDTO, error) {
-	userPid := utils.MockGetClaim("pid")
+func ServGetUserMovements(ctx context.Context) ([]MovementDTO, error) {
+	userPid := utils.GetClaim(ctx, "pid")
 	movements, err := RepoGetUserMovements(userPid)
 
 	if err != nil {
@@ -35,9 +36,9 @@ func ServGetByPid(pid string) (MovementDTO, error) {
 	return toDTO(*movement), nil
 }
 
-func ServSave(request MovementRequest) (MovementDTO, error) {
+func ServSave(ctx context.Context, request MovementRequest) (MovementDTO, error) {
 	instant := utils.GetNowFormat()
-	userPid := utils.MockGetClaim("pid")
+	userPid := utils.GetClaim(ctx, "pid")
 	code := utils.RandomNumber(6, true)
 	pid := utils.RandomString(32)
 

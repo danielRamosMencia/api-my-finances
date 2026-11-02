@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -8,12 +9,12 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func MockGetClaim(claim string) string {
-	// TODO: Implement a mock function to retrieve claims from a JWT token for testing purposes.
-	return "nsPTs1LNq1zk5zRV1OkimiDSocGYSyfX"
-}
+const (
+	JWT_ISSUER   = "api-my-finances"
+	JWT_DURATION = time.Hour * 24
+)
 
-var JWT_KEY = []byte(configurations.Envs.JWT_SECRET)
+type claimsKey struct{}
 
 type TokenRequest struct {
 	Name     string
@@ -22,39 +23,80 @@ type TokenRequest struct {
 	Email    string
 }
 
-func CreateJwt(request TokenRequest) (string, error) {
+type TokenResponse struct {
+	Token     string
+	Session   string
+	ExpiresAt time.Time
+}
+
+func ContextWithClaims(ctx context.Context, claims jwt.MapClaims) context.Context {
+	return context.WithValue(ctx, claimsKey{}, claims)
+}
+
+func GetClaim(ctx context.Context, claim string) string {
+	claims, ok := ctx.Value(claimsKey{}).(jwt.MapClaims)
+	if !ok {
+		return ""
+	}
+
+	value, _ := claims[claim].(string)
+	return value
+}
+
+func jwtKey() []byte {
+	return []byte(configurations.Envs.JWT_SECRET)
+}
+
+func CreateJwt(request TokenRequest) (TokenResponse, error) {
+	now := time.Now()
+	expiresAt := now.Add(JWT_DURATION)
+	session := RandomString(32)
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
 		jwt.MapClaims{
-			"iss":      "api-my-finances",
+			"iss":      JWT_ISSUER,
 			"name":     request.Name,
 			"username": request.Username,
 			"pid":      request.Pid,
 			"email":    request.Email,
-			"session":  RandomString(16),
-			"iat":      time.Now().Unix(),
-			"exp":      time.Now().Add(time.Hour * 24).Unix(),
+			"session":  session,
+			"iat":      now.Unix(),
+			"exp":      expiresAt.Unix(),
 		})
 
-	tokenString, err := token.SignedString(JWT_KEY)
+	tokenString, err := token.SignedString(jwtKey())
 	if err != nil {
-		return "", err
+		return TokenResponse{}, err
 	}
 
-	return tokenString, nil
+	return TokenResponse{
+		Token:     tokenString,
+		Session:   session,
+		ExpiresAt: expiresAt,
+	}, nil
 }
 
-func VerifyToken(tokenString string) error {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return JWT_KEY, nil
-	})
+func VerifyToken(tokenString string) (jwt.MapClaims, error) {
+	claims := jwt.MapClaims{}
+
+	token, err := jwt.ParseWithClaims(
+		tokenString,
+		claims,
+		func(token *jwt.Token) (any, error) {
+			return jwtKey(), nil
+		},
+		jwt.WithValidMethods([]string{jwt.SigningMethodHS256.Alg()}),
+		jwt.WithIssuer(JWT_ISSUER),
+		jwt.WithExpirationRequired(),
+	)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if !token.Valid {
-		return fmt.Errorf("invalid token")
+		return nil, fmt.Errorf("invalid token")
 	}
 
-	return nil
+	return claims, nil
 }

@@ -1,8 +1,10 @@
 package auth
 
 import (
+	"context"
 	"errors"
 
+	"github.com/danielRamosMencia/api-my-finances/internal/sessions"
 	"github.com/danielRamosMencia/api-my-finances/internal/utils"
 )
 
@@ -27,5 +29,11 @@ func ServLogin(request LoginRequest) (string, error) {
 		return "", err
 	}
 
-	return jwt, nil
+	sessions.Save(jwt.Session, jwt.Token, jwt.ExpiresAt)
+
+	return jwt.Token, nil
+}
+
+func ServLogout(ctx context.Context) {
+	sessions.Delete(utils.GetClaim(ctx, "session"))
 }

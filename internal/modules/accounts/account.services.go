@@ -2,8 +2,9 @@ package accounts
 
 import (
 	"context"
-	"errors"
+	"net/http"
 
+	"github.com/danielRamosMencia/api-my-finances/internal/responses"
 	"github.com/danielRamosMencia/api-my-finances/internal/utils"
 )
 
@@ -29,7 +30,7 @@ func ServGetByPid(pid string) (AccountDTO, error) {
 	}
 
 	if account == nil {
-		return AccountDTO{}, errors.New("account with pid " + pid + " not found")
+		return AccountDTO{}, responses.NewError(http.StatusNotFound, responses.ACCOUNT_NOT_FOUND)
 	}
 
 	return toDTO(*account), nil
@@ -63,7 +64,7 @@ func ServUpdate(pid string, request AccountRequest) (AccountDTO, error) {
 	}
 
 	if account == nil {
-		return AccountDTO{}, errors.New("account with pid " + pid + " not found")
+		return AccountDTO{}, responses.NewError(http.StatusNotFound, responses.ACCOUNT_NOT_FOUND)
 	}
 
 	account.Alias = request.Alias

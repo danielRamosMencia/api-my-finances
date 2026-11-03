@@ -3,12 +3,14 @@ package movements
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/danielRamosMencia/api-my-finances/internal/responses"
 )
 
 func HldrGetUserMovements(w http.ResponseWriter, r *http.Request) {
 	movements, err := ServGetUserMovements(r.Context())
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		responses.HandleError(w, err)
 		return
 	}
 
@@ -18,13 +20,13 @@ func HldrGetUserMovements(w http.ResponseWriter, r *http.Request) {
 func HldrGetByPid(w http.ResponseWriter, r *http.Request) {
 	pid := r.PathValue("pid")
 	if pid == "" {
-		http.Error(w, "not provided pid", http.StatusBadRequest)
+		responses.Error(w, http.StatusBadRequest, responses.MISSING_PID)
 		return
 	}
 
 	movement, err := ServGetByPid(pid)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+		responses.HandleError(w, err)
 		return
 	}
 
@@ -39,13 +41,13 @@ func HldrSave(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		responses.InvalidBody(w, err)
 		return
 	}
 
 	movement, err := ServSave(r.Context(), request)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		responses.HandleError(w, err)
 		return
 	}
 

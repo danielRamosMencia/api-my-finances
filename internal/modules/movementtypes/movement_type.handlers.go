@@ -3,12 +3,14 @@ package movementtypes
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/danielRamosMencia/api-my-finances/internal/responses"
 )
 
 func HdlrGetMovementTypes(w http.ResponseWriter, r *http.Request) {
 	movementTypes, err := ServGetMovementTypes()
 	if err != nil {
-		http.Error(w, "Error retrieving movement types", http.StatusInternalServerError)
+		responses.HandleError(w, err)
 		return
 	}
 

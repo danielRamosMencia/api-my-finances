@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/danielRamosMencia/api-my-finances/internal/responses"
 	"github.com/danielRamosMencia/api-my-finances/internal/utils"
 )
 
@@ -11,7 +12,7 @@ func HdlrGetAll(w http.ResponseWriter, r *http.Request) {
 	users, err := ServGetAll()
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		responses.HandleError(w, err)
 		return
 	}
 
@@ -26,13 +27,13 @@ func HdlrGetByPid(w http.ResponseWriter, r *http.Request) {
 
 	pid = utils.Ptr(r.PathValue("pid"))
 	if pid == nil {
-		http.Error(w, "not provided pid", http.StatusBadRequest)
+		responses.Error(w, http.StatusBadRequest, responses.MISSING_PID)
 		return
 	}
 
 	user, err := ServGetByPid(*pid)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+		responses.HandleError(w, err)
 		return
 	}
 
@@ -46,13 +47,13 @@ func HdlrSave(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		responses.InvalidBody(w, err)
 		return
 	}
 
 	user, err := ServSave(request)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		responses.HandleError(w, err)
 		return
 	}
 
@@ -67,7 +68,7 @@ func HdlrUpdate(w http.ResponseWriter, r *http.Request) {
 
 	pid = utils.Ptr(r.PathValue("pid"))
 	if pid == nil {
-		http.Error(w, "not provided pid", http.StatusBadRequest)
+		responses.Error(w, http.StatusBadRequest, responses.MISSING_PID)
 		return
 	}
 
@@ -75,13 +76,13 @@ func HdlrUpdate(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		responses.InvalidBody(w, err)
 		return
 	}
 
 	user, err := ServUpdate(*pid, request)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		responses.HandleError(w, err)
 		return
 	}
 
@@ -96,7 +97,7 @@ func HdlrUpdateActive(w http.ResponseWriter, r *http.Request) {
 
 	pid = utils.Ptr(r.PathValue("pid"))
 	if pid == nil {
-		http.Error(w, "not provided pid", http.StatusBadRequest)
+		responses.Error(w, http.StatusBadRequest, responses.MISSING_PID)
 		return
 	}
 
@@ -104,13 +105,13 @@ func HdlrUpdateActive(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&activeRequest)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		responses.InvalidBody(w, err)
 		return
 	}
 
 	user, err := ServUpdateActive(*pid, activeRequest.Active)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		responses.HandleError(w, err)
 		return
 	}
 
@@ -125,7 +126,7 @@ func HdlrUpdatePassword(w http.ResponseWriter, r *http.Request) {
 
 	pid = utils.Ptr(r.PathValue("pid"))
 	if pid == nil {
-		http.Error(w, "not provided pid", http.StatusBadRequest)
+		responses.Error(w, http.StatusBadRequest, responses.MISSING_PID)
 		return
 	}
 
@@ -133,13 +134,13 @@ func HdlrUpdatePassword(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&passwordRequest)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		responses.InvalidBody(w, err)
 		return
 	}
 
 	err = ServUpdatePassword(*pid, passwordRequest.Password)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		responses.HandleError(w, err)
 		return
 	}
 
@@ -152,13 +153,13 @@ func HdlrUpdateToken(w http.ResponseWriter, r *http.Request) {
 
 	pid = utils.Ptr(r.PathValue("pid"))
 	if pid == nil {
-		http.Error(w, "not provided pid", http.StatusBadRequest)
+		responses.Error(w, http.StatusBadRequest, responses.MISSING_PID)
 		return
 	}
 
 	token, err := ServUpdateToken(*pid)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		responses.HandleError(w, err)
 		return
 	}
 
@@ -173,7 +174,7 @@ func HdlrVerifyToken(w http.ResponseWriter, r *http.Request) {
 
 	pid = utils.Ptr(r.PathValue("pid"))
 	if pid == nil {
-		http.Error(w, "not provided pid", http.StatusBadRequest)
+		responses.Error(w, http.StatusBadRequest, responses.MISSING_PID)
 		return
 	}
 
@@ -181,13 +182,13 @@ func HdlrVerifyToken(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		responses.InvalidBody(w, err)
 		return
 	}
 
 	valid, err := ServVerifyToken(*pid, request.Token)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		responses.HandleError(w, err)
 		return
 	}
 

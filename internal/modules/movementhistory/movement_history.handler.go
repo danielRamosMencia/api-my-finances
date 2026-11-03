@@ -3,12 +3,14 @@ package movementhistory
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/danielRamosMencia/api-my-finances/internal/responses"
 )
 
 func HldrGetUserHistory(w http.ResponseWriter, r *http.Request) {
 	history, err := ServGetUserHistory(r.Context())
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		responses.HandleError(w, err)
 		return
 	}
 

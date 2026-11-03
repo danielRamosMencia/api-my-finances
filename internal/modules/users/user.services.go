@@ -1,10 +1,11 @@
 package users
 
 import (
-	"errors"
+	"net/http"
 	"time"
 
 	"github.com/danielRamosMencia/api-my-finances/internal/configurations"
+	"github.com/danielRamosMencia/api-my-finances/internal/responses"
 	"github.com/danielRamosMencia/api-my-finances/internal/utils"
 )
 
@@ -30,7 +31,7 @@ func ServGetByPid(pid string) (UserDTO, error) {
 	}
 
 	if user == nil {
-		return UserDTO{}, errors.New("user with pid " + pid + " not found")
+		return UserDTO{}, responses.NewError(http.StatusNotFound, responses.USER_NOT_FOUND)
 	}
 
 	return toDTO(*user), nil
@@ -68,7 +69,7 @@ func ServUpdate(pid string, request UserRequest) (UserDTO, error) {
 	}
 
 	if user == nil {
-		return UserDTO{}, errors.New("user with pid " + pid + " not found")
+		return UserDTO{}, responses.NewError(http.StatusNotFound, responses.USER_NOT_FOUND)
 	}
 
 	instant := utils.GetNowFormat()
@@ -93,7 +94,7 @@ func ServUpdateActive(pid string, active bool) (UserDTO, error) {
 	}
 
 	if user == nil {
-		return UserDTO{}, errors.New("user with pid " + pid + " not found")
+		return UserDTO{}, responses.NewError(http.StatusNotFound, responses.USER_NOT_FOUND)
 	}
 
 	err = RepoUpdateActive(pid, active)
@@ -113,7 +114,7 @@ func ServUpdatePassword(pid string, password string) error {
 	}
 
 	if user == nil {
-		return errors.New("user with pid " + pid + " not found")
+		return responses.NewError(http.StatusNotFound, responses.USER_NOT_FOUND)
 	}
 
 	hashedPassword, _ := utils.HashPassword(password)
@@ -133,7 +134,7 @@ func ServUpdateToken(pid string) (string, error) {
 	}
 
 	if user == nil {
-		return "", errors.New("user with pid " + pid + " not found")
+		return "", responses.NewError(http.StatusNotFound, responses.USER_NOT_FOUND)
 	}
 
 	newToken := utils.RandomString(8)
@@ -154,7 +155,7 @@ func ServVerifyToken(pid string, token string) (bool, error) {
 	}
 
 	if storedToken == nil {
-		return false, errors.New("user with pid " + pid + " has no token")
+		return false, responses.NewError(http.StatusNotFound, responses.USER_HAS_NO_TOKEN)
 	}
 
 	equal := utils.VerifyHmacSHA256(configurations.Envs.HMAC_KEY, token, *storedToken)

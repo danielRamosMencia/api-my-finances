@@ -2,8 +2,9 @@ package movements
 
 import (
 	"context"
-	"errors"
+	"net/http"
 
+	"github.com/danielRamosMencia/api-my-finances/internal/responses"
 	"github.com/danielRamosMencia/api-my-finances/internal/utils"
 )
 
@@ -30,7 +31,7 @@ func ServGetByPid(pid string) (MovementDTO, error) {
 	}
 
 	if movement == nil {
-		return MovementDTO{}, errors.New("movement with pid " + pid + " not found")
+		return MovementDTO{}, responses.NewError(http.StatusNotFound, responses.MOVEMENT_NOT_FOUND)
 	}
 
 	return toDTO(*movement), nil

@@ -3,6 +3,8 @@ package auth
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/danielRamosMencia/api-my-finances/internal/responses"
 )
 
 func HldrLogin(w http.ResponseWriter, r *http.Request) {
@@ -10,17 +12,20 @@ func HldrLogin(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		responses.InvalidBody(w, err)
 		return
 	}
 
-	jwt, err := ServLogin(request)
+	response, err := ServLogin(request)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusUnauthorized)
+		responses.HandleError(w, err)
 		return
 	}
 
-	json.NewEncoder(w).Encode(jwt)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	json.NewEncoder(w).Encode(response)
 }
 
 func HldrLogout(w http.ResponseWriter, r *http.Request) {

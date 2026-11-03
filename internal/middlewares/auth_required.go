@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/danielRamosMencia/api-my-finances/internal/responses"
 	"github.com/danielRamosMencia/api-my-finances/internal/sessions"
 	"github.com/danielRamosMencia/api-my-finances/internal/utils"
 	"github.com/golang-jwt/jwt/v5"
@@ -24,6 +25,11 @@ func AuthRequired(mux *http.ServeMux, publicRoutes ...string) http.Handler {
 				return
 			}
 
+			if pattern == "" {
+				responses.Error(w, http.StatusNotFound, responses.ROUTE_NOT_FOUND)
+				return
+			}
+
 			mux.ServeHTTP(w, r)
 			return
 		}
@@ -34,30 +40,30 @@ func AuthRequired(mux *http.ServeMux, publicRoutes ...string) http.Handler {
 
 		header := r.Header.Get("Authorization")
 		if header == "" {
-			http.Error(w, "missing authorization header", http.StatusUnauthorized)
+			responses.Error(w, http.StatusUnauthorized, responses.MISSING_TOKEN)
 			return
 		}
 
 		tokenString, found := strings.CutPrefix(header, "Bearer ")
 		if !found || tokenString == "" {
-			http.Error(w, "authorization header must be: Bearer <token>", http.StatusUnauthorized)
+			responses.Error(w, http.StatusUnauthorized, responses.MISSING_TOKEN)
 			return
 		}
 
 		claims, err := utils.VerifyToken(tokenString)
 		if errors.Is(err, jwt.ErrTokenExpired) {
-			http.Error(w, "token expired, please log in again", http.StatusUnauthorized)
+			responses.Error(w, http.StatusUnauthorized, responses.TOKEN_EXPIRED)
 			return
 		}
 
 		if err != nil {
-			http.Error(w, "invalid token", http.StatusUnauthorized)
+			responses.Error(w, http.StatusUnauthorized, responses.INVALID_TOKEN)
 			return
 		}
 
 		session, _ := claims["session"].(string)
 		if !sessions.IsActive(session, tokenString) {
-			http.Error(w, "session closed or not found, please log in again", http.StatusUnauthorized)
+			responses.Error(w, http.StatusUnauthorized, responses.SESSION_CLOSED)
 			return
 		}
 

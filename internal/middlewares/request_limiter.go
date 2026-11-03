@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/danielRamosMencia/api-my-finances/internal/configurations"
+	"github.com/danielRamosMencia/api-my-finances/internal/responses"
 	"github.com/danielRamosMencia/api-my-finances/internal/sessions"
 	"github.com/danielRamosMencia/api-my-finances/internal/utils"
 )
@@ -69,7 +70,7 @@ var (
 func RequestLimiter(w http.ResponseWriter, r *http.Request, private bool) bool {
 	deviceId := r.Header.Get(DEVICE_ID_HEADER)
 	if deviceId == "" || len(deviceId) > DEVICE_ID_MAX_LENGTH {
-		http.Error(w, "missing or invalid "+DEVICE_ID_HEADER+" header", http.StatusBadRequest)
+		responses.Error(w, http.StatusBadRequest, responses.MISSING_DEVICE_ID)
 		return false
 	}
 
@@ -91,12 +92,12 @@ func RequestLimiter(w http.ResponseWriter, r *http.Request, private bool) bool {
 	if private {
 		deleteRequestSession(r)
 		slog.Warn("[RequestLimiter] private limit exceeded, session closed", "device_id", deviceId, "ip", ip)
-		http.Error(w, fmt.Sprintf("too many requests, session closed. Try again in %d seconds", seconds), http.StatusTooManyRequests)
+		responses.Error(w, http.StatusTooManyRequests, responses.TOO_MANY_REQUESTS_SESSION_CLOSED)
 		return false
 	}
 
 	slog.Warn("[RequestLimiter] public limit exceeded", "device_id", deviceId, "ip", ip)
-	http.Error(w, fmt.Sprintf("too many requests. Try again in %d seconds", seconds), http.StatusTooManyRequests)
+	responses.Error(w, http.StatusTooManyRequests, responses.TOO_MANY_REQUESTS)
 	return false
 }
 

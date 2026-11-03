@@ -44,5 +44,5 @@ func main() {
 
 	slog.Info("Server listening on http://127.0.1.1" + configurations.Envs.SERVER_PORT)
 
-	http.ListenAndServe(configurations.Envs.SERVER_PORT, handler)
+	http.ListenAndServe(configurations.Envs.SERVER_PORT, middlewares.Recover(handler))
 }

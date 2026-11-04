@@ -5,6 +5,7 @@ type MovementDB struct {
 	Pid              string  `db:"pid"`
 	Active           bool    `db:"active"`
 	Code             string  `db:"code"`
+	Description      string  `db:"description"`
 	Amount           float64 `db:"amount"`
 	AccountId        int     `db:"account_id"`
 	AccountPid       string  `db:"account_pid"`
@@ -24,6 +25,7 @@ type MovementDTO struct {
 	Pid              string  `json:"pid"`
 	Active           bool    `json:"active"`
 	Code             string  `json:"code"`
+	Description      string  `json:"description"`
 	Amount           float64 `json:"amount"`
 	AccountPid       string  `json:"account_pid"`
 	AccountAlias     string  `json:"account_alias"`
@@ -36,6 +38,7 @@ type MovementDTO struct {
 }
 
 type MovementRequest struct {
+	Description     string  `json:"description"`
 	Amount          float64 `json:"amount"`
 	MovementTypePid string  `json:"movement_type_pid"`
 	AccountPid      string  `json:"account_pid"`

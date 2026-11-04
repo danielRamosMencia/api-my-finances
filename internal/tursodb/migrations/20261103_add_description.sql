@@ -1,0 +1,1 @@
+ALTER TABLE tb_movement ADD COLUMN `description` VARCHAR(255);

@@ -5,6 +5,7 @@ SELECT
 	tm.id,
 	tm.pid,
 	tm.code,
+	tm.description,
 	tm.active,
 	tm.amount,
 	tm.account_id,
@@ -33,6 +34,7 @@ SELECT
 	tm.id,
 	tm.pid,
 	tm.code,
+	tm.description,
 	tm.active,
 	tm.amount,
 	tm.account_id,
@@ -84,6 +86,7 @@ INSERT INTO tb_movement (
 	pid,
 	active,
 	code,
+	description,
 	amount,
 	account_id,
 	movement_type_id,
@@ -91,6 +94,7 @@ INSERT INTO tb_movement (
 	created_at,
 	updated_at
 ) VALUES (
+	?,
 	?,
 	?,
 	?,

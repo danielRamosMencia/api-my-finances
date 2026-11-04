@@ -1,5 +1,8 @@
 package movementtypes
 
+// INCOME_CODE is the movement type code that adds to the account balance. Every other code subtracts.
+const INCOME_CODE = "INCOME"
+
 type MovementTypeDB struct {
 	Id          int     `db:"id"`
 	Pid         string  `db:"pid"`

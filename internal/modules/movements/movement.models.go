@@ -42,5 +42,4 @@ type MovementRequest struct {
 	Amount          float64 `json:"amount"`
 	MovementTypePid string  `json:"movement_type_pid"`
 	AccountPid      string  `json:"account_pid"`
-	Income          bool    `json:"income"`
 }

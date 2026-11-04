@@ -59,8 +59,6 @@ func RepoGetUserHistory(userPid, from, to string) ([]MovementHistoryDB, error) {
 func RepoGetUserMetrics(userPid, from, to string) (UserMetrics, error) {
 	ctx := context.Background()
 	metrics := UserMetrics{
-		From:     from,
-		To:       to,
 		Accounts: []AccountMetrics{},
 	}
 

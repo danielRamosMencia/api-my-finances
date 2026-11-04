@@ -2,8 +2,11 @@ package movements
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"net/http"
 
+	"github.com/danielRamosMencia/api-my-finances/internal/modules/movementtypes"
 	"github.com/danielRamosMencia/api-my-finances/internal/responses"
 	"github.com/danielRamosMencia/api-my-finances/internal/utils"
 )
@@ -38,6 +41,17 @@ func ServGetByPid(pid string) (MovementDTO, error) {
 }
 
 func ServSave(ctx context.Context, request MovementRequest) (MovementDTO, error) {
+	typeCode, err := RepoGetMovementTypeCode(request.MovementTypePid)
+	if errors.Is(err, sql.ErrNoRows) {
+		return MovementDTO{}, responses.NewError(http.StatusNotFound, responses.MOVEMENT_TYPE_NOT_FOUND)
+	}
+
+	if err != nil {
+		return MovementDTO{}, err
+	}
+
+	income := typeCode == movementtypes.INCOME_CODE
+
 	instant := utils.GetNowFormat()
 	userPid := utils.GetClaim(ctx, "pid")
 	code := utils.RandomNumber(6, true)
@@ -56,7 +70,7 @@ func ServSave(ctx context.Context, request MovementRequest) (MovementDTO, error)
 		UpdatedAt:       utils.Ptr(instant),
 	}
 
-	err := RepoSave(movement, request.Income)
+	err = RepoSave(movement, income)
 	if err != nil {
 		return MovementDTO{}, err
 	}

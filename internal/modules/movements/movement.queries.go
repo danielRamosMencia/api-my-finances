@@ -130,3 +130,10 @@ INSERT INTO tb_movement_history (
 	?
 )
 `
+
+const SELECT_MOVEMENT_TYPE_CODE = `
+SELECT
+	tmt.code
+FROM
+	tb_movement_type tmt WHERE tmt.pid = ?;
+`

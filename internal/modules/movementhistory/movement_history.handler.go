@@ -9,38 +9,57 @@ import (
 	"github.com/danielRamosMencia/api-my-finances/internal/responses"
 )
 
-// getYearMonth reads the year and month query params. A missing param defaults to the current UTC year/month.
-func getYearMonth(r *http.Request) (int, int, bool) {
-	now := time.Now().UTC()
-	year, month := now.Year(), int(now.Month())
+type dateFilter struct {
+	year     int
+	month    int
+	location *time.Location
+}
 
-	if value := r.URL.Query().Get("year"); value != "" {
-		parsed, err := strconv.Atoi(value)
-		if err != nil {
-			return 0, 0, false
+// getDateFilter reads the year, month and timezone (IANA name, e.g. America/Tegucigalpa) query params.
+// Defaults: UTC and the current year/month in that timezone.
+func getDateFilter(r *http.Request) (dateFilter, error) {
+	query := r.URL.Query()
+
+	location := time.UTC
+	if value := query.Get("timezone"); value != "" {
+		loaded, err := time.LoadLocation(value)
+		// "Local" would be the server's timezone
+		if err != nil || value == "Local" {
+			return dateFilter{}, responses.NewError(http.StatusBadRequest, responses.INVALID_TIMEZONE)
 		}
-		year = parsed
+		location = loaded
 	}
 
-	if value := r.URL.Query().Get("month"); value != "" {
+	now := time.Now().In(location)
+	filter := dateFilter{year: now.Year(), month: int(now.Month()), location: location}
+
+	if value := query.Get("year"); value != "" {
 		parsed, err := strconv.Atoi(value)
 		if err != nil {
-			return 0, 0, false
+			return dateFilter{}, responses.NewError(http.StatusBadRequest, responses.INVALID_DATE_FILTER)
 		}
-		month = parsed
+		filter.year = parsed
 	}
 
-	return year, month, true
+	if value := query.Get("month"); value != "" {
+		parsed, err := strconv.Atoi(value)
+		if err != nil {
+			return dateFilter{}, responses.NewError(http.StatusBadRequest, responses.INVALID_DATE_FILTER)
+		}
+		filter.month = parsed
+	}
+
+	return filter, nil
 }
 
 func HldrGetUserHistory(w http.ResponseWriter, r *http.Request) {
-	year, month, ok := getYearMonth(r)
-	if !ok {
-		responses.Error(w, http.StatusBadRequest, responses.INVALID_DATE_FILTER)
+	filter, err := getDateFilter(r)
+	if err != nil {
+		responses.HandleError(w, err)
 		return
 	}
 
-	history, err := ServGetUserHistory(r.Context(), year, month)
+	history, err := ServGetUserHistory(r.Context(), filter.year, filter.month, filter.location)
 	if err != nil {
 		responses.HandleError(w, err)
 		return
@@ -53,13 +72,13 @@ func HldrGetUserHistory(w http.ResponseWriter, r *http.Request) {
 }
 
 func HldrGetUserMetrics(w http.ResponseWriter, r *http.Request) {
-	year, month, ok := getYearMonth(r)
-	if !ok {
-		responses.Error(w, http.StatusBadRequest, responses.INVALID_DATE_FILTER)
+	filter, err := getDateFilter(r)
+	if err != nil {
+		responses.HandleError(w, err)
 		return
 	}
 
-	metrics, err := ServGetUserMetrics(r.Context(), year, month)
+	metrics, err := ServGetUserMetrics(r.Context(), filter.year, filter.month, filter.location)
 	if err != nil {
 		responses.HandleError(w, err)
 		return

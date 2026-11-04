@@ -220,3 +220,20 @@ func RepoSave(movement MovementDB, income bool) error {
 
 	return nil
 }
+
+func RepoGetMovementTypeCode(pid string) (string, error) {
+	var code string
+
+	err := tursodb.DB.QueryRowContext(
+		context.Background(),
+		SELECT_MOVEMENT_TYPE_CODE,
+		pid,
+	).Scan(&code)
+
+	if err != nil {
+		slog.Error("[RepoGetMovementTypeCode] error getting movement type code: " + err.Error())
+		return "", err
+	}
+
+	return code, nil
+}

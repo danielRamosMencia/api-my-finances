@@ -16,6 +16,7 @@ type MovementHistoryDB struct {
 type UserMetrics struct {
 	From           string           `json:"from"`
 	To             string           `json:"to"`
+	Timezone       string           `json:"timezone"`
 	TotalMovements int              `db:"total_movements" json:"total_movements"`
 	TotalIncome    float64          `db:"total_income" json:"total_income"`
 	TotalExpense   float64          `db:"total_expense" json:"total_expense"`

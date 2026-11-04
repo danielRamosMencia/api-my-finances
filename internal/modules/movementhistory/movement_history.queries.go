@@ -1,7 +1,7 @@
 package movementhistory
 
-// Dates are compared with substr(created_at, 1, 10): the "YYYY-MM-DD" prefix of the stored UTC string.
-// SQLite's date() rounds nanoseconds, e.g. date('2026-10-31T23:59:59.999999999Z') = '2026-11-01'.
+// Dates are compared with substr(created_at, 1, 19): the "YYYY-MM-DDTHH:MM:SS" prefix of the stored UTC string.
+// SQLite's date functions round nanoseconds, e.g. date('2026-10-31T23:59:59.999999999Z') = '2026-11-01'.
 
 const SELECT_USER_HISTORY = `
 SELECT
@@ -22,7 +22,7 @@ INNER JOIN tb_account ta ON tm.account_id = ta.id
 INNER JOIN tb_movement_type tmt ON tm.movement_type_id = tmt.id
 INNER JOIN tb_user tu ON tm.user_id = tu.id AND tu.pid = ?
 WHERE
-	substr(tmh.created_at, 1, 10) BETWEEN ? AND ?
+	substr(tmh.created_at, 1, 19) BETWEEN ? AND ?
 ORDER BY
 	tmh.created_at DESC;
 `
@@ -39,7 +39,7 @@ INNER JOIN tb_movement_type tmt ON tm.movement_type_id = tmt.id
 INNER JOIN tb_user tu ON tm.user_id = tu.id AND tu.pid = ?
 WHERE
 	tm.deleted_at IS NULL
-	AND substr(tm.created_at, 1, 10) BETWEEN ? AND ?;
+	AND substr(tm.created_at, 1, 19) BETWEEN ? AND ?;
 `
 
 // LEFT JOINs so accounts without movements in the month are returned with zeros
@@ -56,7 +56,7 @@ FROM
 INNER JOIN tb_user tu ON ta.user_id = tu.id AND tu.pid = ?
 LEFT JOIN tb_movement tm ON tm.account_id = ta.id
 	AND tm.deleted_at IS NULL
-	AND substr(tm.created_at, 1, 10) BETWEEN ? AND ?
+	AND substr(tm.created_at, 1, 19) BETWEEN ? AND ?
 LEFT JOIN tb_movement_type tmt ON tm.movement_type_id = tmt.id
 WHERE
 	ta.deleted_at IS NULL

@@ -12,3 +12,22 @@ type MovementHistoryDB struct {
 	Email         string  `db:"email" json:"email"`
 	Date          string  `db:"date" json:"date"`
 }
+
+type UserMetrics struct {
+	From           string           `json:"from"`
+	To             string           `json:"to"`
+	TotalMovements int              `db:"total_movements" json:"total_movements"`
+	TotalIncome    float64          `db:"total_income" json:"total_income"`
+	TotalExpense   float64          `db:"total_expense" json:"total_expense"`
+	Net            float64          `db:"net" json:"net"`
+	Accounts       []AccountMetrics `json:"accounts"`
+}
+
+type AccountMetrics struct {
+	AccountPid     string  `db:"account_pid" json:"account_pid"`
+	Account        string  `db:"account" json:"account"`
+	TotalMovements int     `db:"total_movements" json:"total_movements"`
+	TotalIncome    float64 `db:"total_income" json:"total_income"`
+	TotalExpense   float64 `db:"total_expense" json:"total_expense"`
+	Net            float64 `db:"net" json:"net"`
+}

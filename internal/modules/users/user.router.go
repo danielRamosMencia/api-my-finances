@@ -24,4 +24,5 @@ func SetUserRoutes(mux *http.ServeMux) {
 	// movements
 	mux.HandleFunc("GET /api/users/movements", movements.HldrGetUserMovements)
 	mux.HandleFunc("GET /api/users/movements/history", movementhistory.HldrGetUserHistory)
+	mux.HandleFunc("GET /api/users/movements/metrics", movementhistory.HldrGetUserMetrics)
 }

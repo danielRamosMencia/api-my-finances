@@ -37,11 +37,11 @@ type limitRules struct {
 var (
 	deviceRules = limitRules{
 		public:  limitRule{maxRequests: 5, window: time.Minute, blockFor: 20 * time.Minute},
-		private: limitRule{maxRequests: 10, window: time.Minute, blockFor: 3 * time.Minute},
+		private: limitRule{maxRequests: 30, window: time.Minute, blockFor: 3 * time.Minute},
 	}
 	ipRules = limitRules{
 		public:  limitRule{maxRequests: 15, window: time.Minute, blockFor: 20 * time.Minute},
-		private: limitRule{maxRequests: 30, window: time.Minute, blockFor: 3 * time.Minute},
+		private: limitRule{maxRequests: 50, window: time.Minute, blockFor: 3 * time.Minute},
 	}
 )
 

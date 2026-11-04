@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -15,6 +16,7 @@ type EnvVariable struct {
 	HMAC_KEY            string
 	JWT_SECRET          string
 	TRUST_PROXY_HEADERS bool
+	DEFAULT_TIMEZONE    *time.Location
 }
 
 var (
@@ -35,6 +37,12 @@ func InitEnvVariables() {
 		Envs.HMAC_KEY = os.Getenv("HMAC_KEY")
 		Envs.JWT_SECRET = os.Getenv("JWT_SECRET")
 		Envs.TRUST_PROXY_HEADERS = os.Getenv("TRUST_PROXY_HEADERS") == "true"
+
+		location, err := time.LoadLocation(os.Getenv("DEFAULT_TIMEZONE"))
+		if err != nil {
+			panic(err)
+		}
+		Envs.DEFAULT_TIMEZONE = location
 
 		slog.Info("Environment variables initialized")
 	})

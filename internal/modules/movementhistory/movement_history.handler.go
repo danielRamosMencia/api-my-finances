@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/danielRamosMencia/api-my-finances/internal/configurations"
 	"github.com/danielRamosMencia/api-my-finances/internal/responses"
 )
 
@@ -16,11 +17,11 @@ type dateFilter struct {
 }
 
 // getDateFilter reads the year, month and timezone (IANA name, e.g. America/Tegucigalpa) query params.
-// Defaults: UTC and the current year/month in that timezone.
+// Defaults: DEFAULT_TIMEZONE and the current year/month in that timezone.
 func getDateFilter(r *http.Request) (dateFilter, error) {
 	query := r.URL.Query()
 
-	location := time.UTC
+	location := configurations.Envs.DEFAULT_TIMEZONE
 	if value := query.Get("timezone"); value != "" {
 		loaded, err := time.LoadLocation(value)
 		// "Local" would be the server's timezone

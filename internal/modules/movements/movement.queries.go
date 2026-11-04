@@ -26,7 +26,10 @@ JOIN tb_user tu ON tm.user_id = tu.id
 JOIN tb_account ta ON tm.account_id = ta.id
 JOIN tb_movement_type tmt ON tm.movement_type_id = tmt.id
 WHERE
-	tu.pid = ?;
+	tu.pid = ?
+	AND substr(tm.created_at, 1, 19) BETWEEN ? AND ?
+ORDER BY
+	tm.created_at DESC;
 `
 
 const SELECT_BY_PID = `

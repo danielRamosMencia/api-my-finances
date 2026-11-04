@@ -8,13 +8,15 @@ import (
 	"github.com/danielRamosMencia/api-my-finances/internal/utils"
 )
 
-func RepoGetUserMovements(userPid string) ([]MovementDB, error) {
+func RepoGetUserMovements(userPid, from, to string) ([]MovementDB, error) {
 	var movements []MovementDB
 
 	rows, err := tursodb.DB.QueryContext(
 		context.Background(),
 		SELECT_USER_MOVEMENTS,
 		userPid,
+		from,
+		to,
 	)
 
 	if err != nil {

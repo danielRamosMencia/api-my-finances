@@ -5,21 +5,29 @@ import (
 	"database/sql"
 	"errors"
 	"net/http"
+	"time"
 
+	"github.com/danielRamosMencia/api-my-finances/internal/configurations"
 	"github.com/danielRamosMencia/api-my-finances/internal/modules/movementtypes"
 	"github.com/danielRamosMencia/api-my-finances/internal/responses"
 	"github.com/danielRamosMencia/api-my-finances/internal/utils"
 )
 
+// ServGetUserMovements returns only the current month (DEFAULT_TIMEZONE). Other months are in the history.
 func ServGetUserMovements(ctx context.Context) ([]MovementDTO, error) {
-	userPid := utils.GetClaim(ctx, "pid")
-	movements, err := RepoGetUserMovements(userPid)
-
+	now := time.Now().In(configurations.Envs.DEFAULT_TIMEZONE)
+	monthRange, err := utils.GetMonthRange(now.Year(), int(now.Month()), now.Location())
 	if err != nil {
 		return nil, err
 	}
 
-	var dtos []MovementDTO
+	userPid := utils.GetClaim(ctx, "pid")
+	movements, err := RepoGetUserMovements(userPid, monthRange.From, monthRange.To)
+	if err != nil {
+		return nil, err
+	}
+
+	dtos := []MovementDTO{}
 	for _, movement := range movements {
 		dtos = append(dtos, toDTO(movement))
 	}
